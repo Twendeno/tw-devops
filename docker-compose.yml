@@ -22,13 +22,6 @@ services:
       - "80:80"
       - "443:443"
       - "8080:8080"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.port=81"
-      - "traefik.docker.network=traefik-rx"
-      - "traefik.http.routers.traefik.rule=Host(`local.traefik.me`)"
-      - "traefik.http.routers.traefik.entrypoints=https"
-
     volumes:
       - ./traefik.yml:/etc/traefik/traefik.yml
       - ./tls.yml:/etc/traefik/tls.yml
@@ -69,7 +62,7 @@ services:
       - "traefik.docker.network=traefik-rx"
       - "traefik.http.routers.rxtrans-tls.tls=true"
       - "traefik.http.routers.rxtrans-tls.entrypoints=https"
-      - "traefik.http.services.rxtrans.loadbalancer.server.port=3000"
+      - "traefik.http.services.rxtrans.loadbalancer.server.port=${PORT}"
 
 
 volumes:
