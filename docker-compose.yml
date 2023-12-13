@@ -1,0 +1,87 @@
+version: '3.9'
+
+services:
+  # Reverse proxy helper
+  generate-certs:
+    image: alpine
+    container_name: generate-certs
+    command: sh -c "cd /etc/ssl/traefik
+      && wget traefik.me/cert.pem -O cert.pem
+      && wget traefik.me/privkey.pem -O privkey.pem"
+    volumes:
+      - certs:/etc/ssl/traefik
+    networks:
+      - traefik-rx
+
+  # TRAEFIK
+  traefik:
+    restart: unless-stopped
+    image: traefik:v2.10.7
+    container_name: traefik
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=81"
+      - "traefik.docker.network=traefik-rx"
+      - "traefik.http.routers.traefik.rule=Host(`local.traefik.me`)"
+      - "traefik.http.routers.traefik.entrypoints=https"
+
+    volumes:
+      - ./traefik.yml:/etc/traefik/traefik.yml
+      - ./tls.yml:/etc/traefik/tls.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+      - certs:/etc/ssl/traefik
+      - ./logs/traefik:/var/log/traefik/access.log/
+      - logs:/var/log/traefik/access.log
+    networks:
+      - traefik-rx
+    depends_on:
+      - generate-certs
+
+  # APPLICATIONS
+  postgres:
+    image: postgres:16.1-alpine
+    container_name: postgres
+    env_file:
+      - .env
+    volumes:
+      - ./data/postgres/data:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - api-rx
+      - traefik-rx
+
+  ms-rx-trans:
+    image: styvelioumba/ms-reseau-transport:17-dev
+    container_name: ms-reseau-transport
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    networks:
+      - api-rx
+      - traefik-rx
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-rx"
+      - "traefik.http.routers.rxtrans-tls.tls=true"
+      - "traefik.http.routers.rxtrans-tls.entrypoints=https"
+      - "traefik.http.services.rxtrans.loadbalancer.server.port=3000"
+
+
+volumes:
+  certs:
+    name: traefik-certs
+  logs:
+    name: traefik-logs
+  postgres:
+    name: nest-db
+
+networks:
+  traefik-rx:
+    name: traefik-rx
+  api-rx:
+    name: api-rx

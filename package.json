@@ -1,0 +1,27 @@
+{
+  "name": "tw-devops",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Twendeno/tw-devops.git"
+  },
+  "keywords": [
+    "traefik",
+    "docker",
+    "docker-compose"
+  ],
+  "author": "twendeno",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Twendeno/tw-devops/issues"
+  },
+  "homepage": "https://github.com/Twendeno/tw-devops#readme",
+  "dependencies": {
+    "release-it": "^17.0.1"
+  }
+}
