@@ -17,6 +17,7 @@ Ce projet sert de point central de contrôle pour l'ensemble des services déplo
 ```bash
 $ git clone
 $ cd tw-devops
+$ npm i
 $ docker-compose up -d
 ```
 
