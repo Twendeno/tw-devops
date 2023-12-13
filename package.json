@@ -1,7 +1,7 @@
 {
   "name": "tw-devops",
   "version": "1.0.0",
-  "description": "",
+  "description": "Ce projet sert de point central de contrôle pour l'ensemble des services déployés. Il assume les rôles de reverse proxy ainsi que de répartiteur de charge, facilitant ainsi la gestion et l'acheminement des requêtes entre les différents services.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
